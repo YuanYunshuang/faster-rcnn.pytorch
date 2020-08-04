@@ -25,8 +25,8 @@
     } \
   } while (0)
 
-#define DIVUP(m,n) ((m) / (n) + ((m) % (n) > 0))
-int const threadsPerBlock = sizeof(unsigned long long) * 8;
+#define DIVUP(m,n) ((m) / (n) + ((m) % (n) > 0)) //division round up without type transform between float and int
+int const threadsPerBlock = sizeof(unsigned long long) * 8; //64
 
 __device__ inline float devIoU(float const * const a, float const * const b) {
   float left = max(a[0], b[0]), right = min(a[2], b[2]);

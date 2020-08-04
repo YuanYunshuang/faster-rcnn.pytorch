@@ -9,15 +9,15 @@ from __future__ import print_function
 import os
 from os.path import join as pjoin
 import numpy as np
-from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup
+from setuptools.extension import Extension
 from Cython.Distutils import build_ext
 
 
 def find_in_path(name, path):
     "Find a file in a search path"
     # adapted fom http://code.activestate.com/recipes/52224-find-a-file-given-a-search-path/
-    for dir in path.split(os.pathsep):
+    for dir in path.split(os.pathsep): # os.pathsep returns the separator in the PATH, in linux its ":"
         binpath = pjoin(dir, name)
         if os.path.exists(binpath):
             return os.path.abspath(binpath)
@@ -62,6 +62,8 @@ def find_in_path(name, path):
 # Obtain the numpy include directory.  This logic works across numpy versions.
 try:
     numpy_include = np.get_include()
+    # get_inlude() return the dir that contains the np *.h header files. Extension modules that need to compile against
+    # np should use this func to locate the appropriate include dir
 except AttributeError:
     numpy_include = np.get_numpy_include()
 
@@ -114,13 +116,17 @@ class custom_build_ext(build_ext):
 
 ext_modules = [
     Extension(
-        "model.utils.cython_bbox",
-        ["model/utils/bbox.pyx"],
+        name = "model.utils.cython_bbox",
+        sources = ["model/utils/bbox.pyx"],
+        # any extra platform- and compiler-specific information to use when compiling the source files in ‘sources’. For
+        # platforms and compilers where a command line makes sense, this is typically a list of command-line arguments,
+        # but for other platforms it could be anything. Here, turn off Warnings for cpp and unused function
         extra_compile_args={'gcc': ["-Wno-cpp", "-Wno-unused-function"]},
+        # list of directories to search for C/C++ header files (in Unix form for portability)
         include_dirs=[numpy_include]
     ),
     Extension(
-        'pycocotools._mask',
+        name = 'pycocotools._mask',
         sources=['pycocotools/maskApi.c', 'pycocotools/_mask.pyx'],
         include_dirs=[numpy_include, 'pycocotools'],
         extra_compile_args={
@@ -130,7 +136,7 @@ ext_modules = [
 
 setup(
     name='faster_rcnn',
-    ext_modules=ext_modules,
+    ext_modules=ext_modules, # A list fo instances of Extension providing the list of Python extensions to be built
     # inject our custom trigger
-    cmdclass={'build_ext': custom_build_ext},
+    cmdclass={'build_ext': custom_build_ext}, # A dictionary providing a mapping of command names to command subclasses
 )

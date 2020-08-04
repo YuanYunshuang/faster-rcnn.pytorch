@@ -9,7 +9,8 @@ export CUDA_PATH=/usr/local/cuda/
 export CXXFLAGS="-std=c++11"
 export CFLAGS="-std=c99"
 
-python setup.py build_ext --inplace
+python setup.py build_ext --inplace # build model.utils.bbox.pyx and pycocotools._mask,
+# TODO: try removing nvcc customization, because it might not be used
 rm -rf build
 
 CUDA_ARCH="-gencode arch=compute_30,code=sm_30 \

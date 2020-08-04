@@ -1,3 +1,12 @@
+/**
+THC is one of the low-level tensor libraries for PyTorch
+TH = TorcH
+THC = TorcH Cuda
+THCS = TorcH Cuda Sparse (now defunct)
+THCUNN = TorcH CUda Neural Network (see cunn)
+THNN = TorcH Neural Network (now defunct)
+THS = TorcH Sparse (now defunct)
+*/
 #include <THC/THC.h>
 #include <stdio.h>
 #include "nms_cuda_kernel.h"
